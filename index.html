@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Tiền Điện Nước Ký Túc Xá</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e0e5ec;
+            --secondary-color: #a3b1c6;
+            --text-color: #4a4a4a;
+            --highlight-color: #007bff;
+            --error-color: #ff4136;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background: var(--primary-color);
+            border-radius: 20px;
+            box-shadow: 
+                10px 10px 20px #d1d9e6,
+                -10px -10px 20px #ffffff;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--highlight-color);
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary-color);
+            box-shadow: inset 5px 5px 10px #d1d9e6, 
+                        inset -5px -5px 10px #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            box-shadow: inset 3px 3px 5px #d1d9e6, 
+                        inset -3px -3px 5px #ffffff;
+        }
+
+        button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--highlight-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 5px 5px 10px #d1d9e6, 
+                        -5px -5px 10px #ffffff;
+        }
+
+        button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 3px 3px 5px #d1d9e6, 
+                        -3px -3px 5px #ffffff;
+        }
+
+        #personList {
+            margin-top: 20px;
+        }
+
+        .person-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .person-item input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .remove-person {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remove-person:hover {
+            background: #ff7675;
+            transform: rotate(90deg);
+        }
+
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--primary-color);
+            border-radius: 10px;
+            box-shadow: 
+                5px 5px 10px #d1d9e6,
+                -5px -5px 10px #ffffff;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #results.show {
+            opacity: 1;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: var(--primary-color);
+            border-radius: 8px;
+            box-shadow: 
+                3px 3px 6px #d1d9e6,
+                -3px -3px 6px #ffffff;
+        }
+
+        .error {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            button {
+                font-size: 14px;
+            }
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: 
+                5px 5px 10px #d1d9e6,
+                -5px -5px 10px #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .dark-mode-toggle i {
+            font-size: 24px;
+            color: var(--text-color);
+        }
+
+        body.dark-mode {
+            --primary-color: #2d3748;
+            --secondary-color: #4a5568;
+            --text-color: #e2e8f0;
+            --highlight-color: #63b3ed;
+        }
+
+        body.dark-mode .container,
+        body.dark-mode input[type="text"],
+        body.dark-mode input[type="number"],
+        body.dark-mode #results,
+        body.dark-mode .result-item {
+            box-shadow: 
+                5px 5px 10px #1a202c,
+                -5px -5px 10px #4a5568;
+        }
+
+        body.dark-mode input[type="text"]:focus,
+        body.dark-mode input[type="number"]:focus {
+            box-shadow: 
+                3px 3px 5px #1a202c,
+                -3px -3px 5px #4a5568;
+        }
+
+        body.dark-mode .dark-mode-toggle {
+            box-shadow: 
+                5px 5px 10px #1a202c,
+                -5px -5px 10px #4a5568;
+        }
+        .footer{
+            text-align: center;
+            margin-top: 20px;
+        }
+            
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tính Tiền Điện Nước Ký Túc Xá</h1>
+        <form id="utilityForm">
+            <div class="input-group">
+                <label for="totalCost">Tổng chi phí điện nước (VNĐ):</label>
+                <input type="number" id="totalCost" required>
+            </div>
+            <div id="personList">
+                <div class="person-item">
+                    <input type="text" class="person-name" placeholder="Tên người" required>
+                    <input type="number" class="person-days" placeholder="Số ngày ở" required>
+                    <button type="button" class="remove-person" title="Xóa người này">&times;</button>
+                </div>
+            </div>
+            <button type="button" id="addPerson">Thêm Người</button>
+            <button type="submit" id="calculate">Tính Toán</button>
+        </form>
+        <div id="results"></div>
+    </div>
+    <button class="dark-mode-toggle" title="Chuyển đổi chế độ tối/sáng">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="footer">
+        <p>© 2024 Khamko. All rights reserved.</p>
+        <p><a href="https://www.facebook.com/khamkoxys"><i class="fab fa-facebook"> : khamko xys</i></a>.</p>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('utilityForm');
+            const addPersonButton = document.getElementById('addPerson');
+            const personList = document.getElementById('personList');
+            const resultsDiv = document.getElementById('results');
+            const darkModeToggle = document.querySelector('.dark-mode-toggle');
+
+            // Load saved data
+            loadSavedData();
+
+            // Add person
+            addPersonButton.addEventListener('click', addPerson);
+
+            // Remove person
+            personList.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-person')) {
+                    e.target.closest('.person-item').remove();
+                }
+            });
+
+            // Calculate
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateCosts();
+            });
+
+            // Dark mode toggle
+            darkModeToggle.addEventListener('click', toggleDarkMode);
+
+            function addPerson() {
+                const personItem = document.createElement('div');
+                personItem.classList.add('person-item');
+                personItem.innerHTML = `
+                    <input type="text" class="person-name" placeholder="Tên người" required>
+                    <input type="number" class="person-days" placeholder="Số ngày ở" required>
+                    <button type="button" class="remove-person" title="Xóa người này">&times;</button>
+                `;
+                personList.appendChild(personItem);
+            }
+
+            function calculateCosts() {
+                const totalCost = parseFloat(document.getElementById('totalCost').value);
+                const people = document.querySelectorAll('.person-item');
+                let totalDays = 0;
+                const personData = [];
+
+                people.forEach(person => {
+                    const name = person.querySelector('.person-name').value;
+                    const days = parseInt(person.querySelector('.person-days').value);
+                    if (name && !isNaN(days)) {
+                        totalDays += days;
+                        personData.push({ name, days });
+                    }
+                });
+
+                if (isNaN(totalCost) || totalDays === 0) {
+                    showError('Vui lòng nhập đầy đủ thông tin hợp lệ.');
+                    return;
+                }
+
+                const results = personData.map(person => {
+                    const cost = (person.days / totalDays) * totalCost;
+                    return `<div class="result-item">
+                        <span>${person.name}</span>
+                        <span>${cost.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</span>
+                    </div>`;
+                });
+
+                resultsDiv.innerHTML = results.join('');
+                resultsDiv.classList.add('show');
+
+                // Save data
+                saveData();
+            }
+
+            function showError(message) {
+                const errorDiv = document.createElement('div');
+                errorDiv.classList.add('error');
+                errorDiv.textContent = message;
+                form.insertBefore(errorDiv, resultsDiv);
+                setTimeout(() => errorDiv.remove(), 3000);
+            }
+
+            function saveData() {
+                const data = {
+                    totalCost: document.getElementById('totalCost').value,
+                    people: Array.from(document.querySelectorAll('.person-item')).map(person => ({
+                        name: person.querySelector('.person-name').value,
+                        days: person.querySelector('.person-days').value
+                    }))
+                };
+                localStorage.setItem('utilityCalculatorData', JSON.stringify(data));
+            }
+
+            function loadSavedData() {
+                const savedData = localStorage.getItem('utilityCalculatorData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    document.getElementById('totalCost').value = data.totalCost;
+                    data.people.forEach(person => {
+                        const personItem = document.createElement('div');
+                        personItem.classList.add('person-item');
+                        personItem.innerHTML = `
+                            <input type="text" class="person-name" value="${person.name}" required>
+                            <input type="number" class="person-days" value="${person.days}" required>
+                            <button type="button" class="remove-person" title="Xóa người này">&times;</button>
+                        `;
+                        personList.appendChild(personItem);
+                    });
+                }
+            }
+
+            function toggleDarkMode() {
+                document.body.classList.toggle('dark-mode');
+                const icon = darkModeToggle.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
